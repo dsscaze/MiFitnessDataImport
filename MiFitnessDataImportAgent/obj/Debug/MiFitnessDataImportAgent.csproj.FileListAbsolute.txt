@@ -1,0 +1,10 @@
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\bin\Debug\MiFitnessDataImportAgent.exe.config
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\bin\Debug\MiFitnessDataImportAgent.exe
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\bin\Debug\MiFitnessDataImportAgent.pdb
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.csprojAssemblyReference.cache
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.Form1.resources
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.Properties.Resources.resources
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.csproj.GenerateResource.cache
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.csproj.CoreCompileInputs.cache
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.exe
+C:\Users\dssca\Documents\GitHub\MiFitnessDataImport\MiFitnessDataImportAgent\obj\Debug\MiFitnessDataImportAgent.pdb
