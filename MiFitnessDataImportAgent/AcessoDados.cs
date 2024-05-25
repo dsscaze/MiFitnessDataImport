@@ -26,6 +26,22 @@ namespace MiFitnessDataImportAgent
             cmd.ExecuteNonQuery();
         }
 
+        public DataSet listar(string sql)
+        {
+            DataSet ds = new DataSet();
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = sql;
+            cmd.CommandType = CommandType.Text;
+
+            SqlDataAdapter da = new SqlDataAdapter();
+            da.SelectCommand = cmd;
+            da.Fill(ds);
+
+            return ds;
+        }
+
         public DataSet listar()
         {
             DataSet ds = new DataSet();
