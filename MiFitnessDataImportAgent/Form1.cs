@@ -23,9 +23,9 @@ namespace MiFitnessDataImportAgent
         private void lerSportCSV()
         {
             AcessoDados _bd = new AcessoDados();
-            string caminhoBase = @"C:\Users\dssca\Downloads\xiaomi-data-mifitness-20240521\20240522_6599729986_MiFitness_c3_data_copy-f1\";
-            string arquivoSport = @"20240522_6599729986_MiFitness_hlth_center_sport_record.csv";
-            string arquivoFitness = @"20240522_6599729986_MiFitness_hlth_center_fitness_data.csv";
+            string caminhoBase = @"C:\Users\dssca\Downloads\xiami-mifitness-31052024\20240601_6599729986_MiFitness_c3_data_copy\";
+            string arquivoSport = @"20240601_6599729986_MiFitness_hlth_center_sport_record.csv";
+            string arquivoFitness = @"20240601_6599729986_MiFitness_hlth_center_fitness_data.csv";
 
             using (TextFieldParser parser = new TextFieldParser(caminhoBase + arquivoSport))
             {
@@ -47,11 +47,19 @@ namespace MiFitnessDataImportAgent
                         string value = fields[5];
                         string updatetime = fields[6];
 
-                        string sqlInsertSport = @"insert into sportrecord (Uid,Sid,[Key],Time,Category,Value,UpdateTime) ";
-                        sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                            uid, sid, key, time, category, value, updatetime);
+                        string sqlConsultaSport = string.Format("select 1 from sportrecord " +
+                            " where [key] = '{0}' and time = '{1}' and value = '{2}' ",
+                            key, time, value);
 
-                        _bd.executaComando(sqlInsertSport);
+                        DataTable dt = _bd.listar(sqlConsultaSport).Tables[0];
+                        if (dt.Rows.Count <= 0)
+                        {
+                            string sqlInsertSport = @"insert into sportrecord (Uid,Sid,[Key],Time,Category,Value,UpdateTime) ";
+                            sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+                                uid, sid, key, time, category, value, updatetime);
+
+                            _bd.executaComando(sqlInsertSport);
+                        }
                     }
 
                     lineNumber++;
@@ -77,11 +85,21 @@ namespace MiFitnessDataImportAgent
                         string value = fields[4];
                         string updatetime = fields[5];
 
-                        string sqlInsertSport = @"insert into fitnessdata (Uid,Sid,[Key],Time,Value,UpdateTime) ";
-                        sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}')",
-                            uid, sid, key, time, value, updatetime);
+                        string sqlConsultaSport = string.Format("select 1 from fitnessdata " +
+                            " where [key] = '{0}' and time = '{1}' and value = '{2}' ",
+                            key, time, value);
 
-                        _bd.executaComando(sqlInsertSport);
+                        DataTable dt = _bd.listar(sqlConsultaSport).Tables[0];
+                        if (dt.Rows.Count <= 0)
+                        {
+
+                            string sqlInsertSport = @"insert into fitnessdata (Uid,Sid,[Key],Time,Value,UpdateTime) ";
+                            sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}')",
+                                uid, sid, key, time, value, updatetime);
+
+                            _bd.executaComando(sqlInsertSport);
+
+                        }
                     }
 
                     lineNumber++;
@@ -100,7 +118,6 @@ namespace MiFitnessDataImportAgent
                         From SportRecord
                         where _datahora >= '2024-05-01'
                         and StravaId is null";
-
 
             DataTable dt = _bd.listar(sqlConsulta).Tables[0];
             foreach (DataRow dr in dt.Rows)
@@ -145,7 +162,6 @@ namespace MiFitnessDataImportAgent
 
                 if (!string.IsNullOrEmpty(sportStrava))
                 {
-
                     var client = new RestClient(options);
                     var request = new RestRequest("/api/v3/activities", Method.Post);
                     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -163,13 +179,11 @@ namespace MiFitnessDataImportAgent
 
                     if (response.IsSuccessful)
                     {
-
                         dynamic jsonStrava = JsonConvert.DeserializeObject(response.Content);
                         string stravaId = jsonStrava.id.ToString();
 
                         string sqlUpdate = @"UPDATE SportRecord SET StravaId = '" + stravaId + "' WHERE ID = " + idMiFitness;
                         _bd.executaComando(sqlUpdate);
-
                     }
                     else
                     {
@@ -178,10 +192,7 @@ namespace MiFitnessDataImportAgent
                 }
                 else
                 {
-
                 }
-
-
             }
         }
     }
