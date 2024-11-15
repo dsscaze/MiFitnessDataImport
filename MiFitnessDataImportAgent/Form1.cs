@@ -23,9 +23,9 @@ namespace MiFitnessDataImportAgent
         private void lerSportCSV()
         {
             AcessoDados _bd = new AcessoDados();
-            string caminhoBase = @"C:\Users\dssca\Downloads\xiami-mifitness-31052024\20240601_6599729986_MiFitness_c3_data_copy\";
-            string arquivoSport = @"20240601_6599729986_MiFitness_hlth_center_sport_record.csv";
-            string arquivoFitness = @"20240601_6599729986_MiFitness_hlth_center_fitness_data.csv";
+            string caminhoBase = @"C:\Users\dssca\Downloads\20241116__MiFitness_c3_data_copy\";
+            string arquivoSport = @"20241116__MiFitness_hlth_center_sport_record.csv";
+            string arquivoFitness = @"20241116__MiFitness_hlth_center_fitness_data.csv";
 
             using (TextFieldParser parser = new TextFieldParser(caminhoBase + arquivoSport))
             {
@@ -59,6 +59,9 @@ namespace MiFitnessDataImportAgent
                                 uid, sid, key, time, category, value, updatetime);
 
                             _bd.executaComando(sqlInsertSport);
+
+                            string sqlUpdateData = @"update SportRecord set _datahora = dateadd(hour, -3, DATEADD(s, cast([time] as int), '1970-01-01 00:00:00')) where _datahora is null";
+                            _bd.executaComando(sqlUpdateData);
                         }
                     }
 
@@ -66,58 +69,65 @@ namespace MiFitnessDataImportAgent
                 }
             }
 
-            using (TextFieldParser parser = new TextFieldParser(caminhoBase + arquivoFitness))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
+            MessageBox.Show("terminou!!");
 
-                int lineNumber = 1;
+            #region arquivo fitness
+            //using (TextFieldParser parser = new TextFieldParser(caminhoBase + arquivoFitness))
+            //{
+            //    parser.TextFieldType = FieldType.Delimited;
+            //    parser.SetDelimiters(",");
 
-                while (!parser.EndOfData)
-                {
-                    string[] fields = parser.ReadFields();
-                    if (lineNumber > 1)
-                    {
-                        string uid = fields[0];
-                        string sid = fields[1];
-                        string key = fields[2];
-                        string time = fields[3];
-                        string value = fields[4];
-                        string updatetime = fields[5];
+            //    int lineNumber = 1;
 
-                        string sqlConsultaSport = string.Format("select 1 from fitnessdata " +
-                            " where [key] = '{0}' and time = '{1}' and value = '{2}' ",
-                            key, time, value);
+            //    while (!parser.EndOfData)
+            //    {
+            //        string[] fields = parser.ReadFields();
+            //        if (lineNumber > 1)
+            //        {
+            //            string uid = fields[0];
+            //            string sid = fields[1];
+            //            string key = fields[2];
+            //            string time = fields[3];
+            //            string value = fields[4];
+            //            string updatetime = fields[5];
 
-                        DataTable dt = _bd.listar(sqlConsultaSport).Tables[0];
-                        if (dt.Rows.Count <= 0)
-                        {
+            //            //string sqlConsultaSport = string.Format("select 1 from fitnessdata " +
+            //            //    " where [key] = '{0}' and time = '{1}' and value = '{2}' ",
+            //            //    key, time, value);
 
-                            string sqlInsertSport = @"insert into fitnessdata (Uid,Sid,[Key],Time,Value,UpdateTime) ";
-                            sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}')",
-                                uid, sid, key, time, value, updatetime);
+            //            //DataTable dt = _bd.listar(sqlConsultaSport).Tables[0];
+            //            //if (dt.Rows.Count <= 0)
+            //            //{
 
-                            _bd.executaComando(sqlInsertSport);
+            //            string sqlInsertSport = @"insert into fitnessdata (Uid,Sid,[Key],Time,Value,UpdateTime) ";
+            //            sqlInsertSport += string.Format("values ('{0}','{1}','{2}','{3}','{4}','{5}')",
+            //                uid, sid, key, time, value, updatetime);
 
-                        }
-                    }
+            //            _bd.executaComando(sqlInsertSport);
 
-                    lineNumber++;
-                }
-            }
+            //            //}
+            //        }
+
+            //        lineNumber++;
+            //    }
+
+            //    MessageBox.Show("terminou!!");
+            //}
+            #endregion arquivo fitness
         }
 
         private void btnGerarJsonStrava_Click(object sender, EventArgs e)
         {
             AcessoDados _bd = new AcessoDados();
 
-            string sql = @"update SportRecord set _datahora = DATEADD(s, cast([time] as int), '1970-01-01 00:00:00') where _datahora is null";
-            _bd.executaComando(sql);
+            //string sql = @"update SportRecord set _datahora = DATEADD(s, cast([time] as int), '1970-01-01 00:00:00') where _datahora is null";
+            //_bd.executaComando(sql);
 
-            string sqlConsulta = @"select id, [value], [key], dateadd(hour,-3,_datahora) _datahora
+            string sqlConsulta = @"select id, [value], [key], _datahora _datahora
                         From SportRecord
-                        where _datahora >= '2024-05-01'
-                        and StravaId is null";
+                        where _datahora >= '2024-06-01'
+                        and StravaId is null
+                        and [key]  not like 'outdoor%'";
 
             DataTable dt = _bd.listar(sqlConsulta).Tables[0];
             foreach (DataRow dr in dt.Rows)
@@ -149,6 +159,16 @@ namespace MiFitnessDataImportAgent
                         nomeStrava = "esteira";
                         break;
 
+                    case "indoor_walking":
+                        sportStrava = "Walk";
+                        nomeStrava = "caminhada na esteira";
+                        break;
+
+                    //case "outdoor_running":
+                    //    sportStrava = "Run";
+                    //    nomeStrava = "corrida";
+                    //    break;
+
                     case "indoor_fitness":
                         sportStrava = "WeightTraining";
                         nomeStrava = "musculação";
@@ -158,14 +178,20 @@ namespace MiFitnessDataImportAgent
                         sportStrava = "StairStepper";
                         nomeStrava = "escada";
                         break;
+
+                    case "elliptical_trainer":
+                        sportStrava = "Elliptical";
+                        nomeStrava = "Eliptico";
+                        break;
                 }
 
+                string tokenAuth = "";
                 if (!string.IsNullOrEmpty(sportStrava))
                 {
                     var client = new RestClient(options);
                     var request = new RestRequest("/api/v3/activities", Method.Post);
                     request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                    request.AddHeader("Authorization", "Bearer ");
+                    request.AddHeader("Authorization", "Bearer " + tokenAuth);
                     request.AddParameter("name", nomeStrava);
                     request.AddParameter("type", sportStrava);
                     request.AddParameter("sport_type", sportStrava);
@@ -184,6 +210,23 @@ namespace MiFitnessDataImportAgent
 
                         string sqlUpdate = @"UPDATE SportRecord SET StravaId = '" + stravaId + "' WHERE ID = " + idMiFitness;
                         _bd.executaComando(sqlUpdate);
+
+                        var client2 = new RestClient(options);
+                        var request2 = new RestRequest("/api/v3/activities/" + stravaId, Method.Put);
+                        request2.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                        request2.AddHeader("Authorization", "Bearer " + tokenAuth);
+                        request2.AddParameter("hide_from_home", "1");
+                        RestResponse response2 = client.Execute(request2);
+                        Console.WriteLine(response2.Content);
+
+                        if (response2.IsSuccessful)
+                        {
+
+                        }
+                        else
+                        {
+                            // gravar log do erro
+                        }
                     }
                     else
                     {
