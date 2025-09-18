@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/MiFitnessDataImport/v15
+/MiFitnessDataImportAgent/bin
+/MiFitnessDataImportAgent/obj

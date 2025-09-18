@@ -23,9 +23,9 @@ namespace MiFitnessDataImportAgent
         private void lerSportCSV()
         {
             AcessoDados _bd = new AcessoDados();
-            string caminhoBase = @"C:\Users\dssca\Downloads\20241116__MiFitness_c3_data_copy\";
-            string arquivoSport = @"20241116__MiFitness_hlth_center_sport_record.csv";
-            string arquivoFitness = @"20241116__MiFitness_hlth_center_fitness_data.csv";
+            string caminhoBase = @"C:\Users\dssca\Downloads\20241207_6599729986_MiFitness_c3_data_copy\";
+            string arquivoSport = @"20241207_6599729986_MiFitness_hlth_center_sport_record.csv";
+            string arquivoFitness = @"20241207_6599729986_MiFitness_hlth_center_fitness_data.csv";
 
             using (TextFieldParser parser = new TextFieldParser(caminhoBase + arquivoSport))
             {
@@ -185,7 +185,7 @@ namespace MiFitnessDataImportAgent
                         break;
                 }
 
-                string tokenAuth = "";
+                string tokenAuth = "c67470bc0f39901ba44a70236c9ba80b07fea269";
                 if (!string.IsNullOrEmpty(sportStrava))
                 {
                     var client = new RestClient(options);
